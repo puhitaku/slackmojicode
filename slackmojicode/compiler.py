@@ -367,11 +367,11 @@ def compile_assignment(context, ast):
     name = str(ast.left.getname())
     index = None
     for k, v in context.variables.iteritems():
+        assert(isinstance(v,objects.Variable))
         if v.name == name:
             index = k
-            raise errors.ImmutableError(name)
-
-    if index is None:        
+            break
+    if index is None:
         index = context.register_variable(name)
     compile_any(context, ast.right)
     context.emit(bytecode.STORE_VARIABLE, index)

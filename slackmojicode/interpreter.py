@@ -73,10 +73,7 @@ class Interpreter(object):
             elif opcode == bytecode.STORE_VARIABLE:
                 value = stack.pop()
                 oldvar = byte_code.variables.get(arg,None)
-                if isinstance(oldvar,objects.Variable):
-                    byte_code.variables[arg] = objects.Variable(oldvar.name,value)
-                else:
-                    byte_code.variables[arg] = objects.Variable("arg",value)
+                byte_code.variables[arg] = objects.Variable(oldvar.name,value)
                 stack.append(value)
             
             elif opcode == bytecode.STORE_ARRAY:
@@ -93,6 +90,7 @@ class Interpreter(object):
             
             elif opcode == bytecode.PRINT:
                 value = stack.pop()
+                print value.to_string()
                 self.stdout.append(value.to_string())
                 stack.append(objects.Null())
             

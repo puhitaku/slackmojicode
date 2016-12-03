@@ -82,9 +82,9 @@ def statement_full(state, p):
 def statement_expr(state, p):
     return p[0]
 
-@pg.production('statement : LET IDENTIFIER = expression')
+@pg.production('statement : IDENTIFIER = expression')
 def statement_assignment(state, p):
-    return Assignment(Variable(p[1].getstr()),p[3])
+    return Assignment(Variable(p[0].getstr()),p[2])
 
 @pg.production('statement : FUNCTION IDENTIFIER ( arglist ) COLON NEWLINE block END')
 def statement_func(state, p):

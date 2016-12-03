@@ -526,14 +526,8 @@ class Assignment(BinaryOp):
     
     def eval(self, env):
         if isinstance(self.left,Variable):
-        
-            if env.variables.get(self.left.getname(), None) is None:
-                env.variables[self.left.getname()] = self.right
-                return self.right.eval(env)
-            
-            # otherwise raise error
-            raise ImmutableError(self.left.getname())
-        
+            env.variables[self.left.getname()] = self.right
+            return self.right.eval(env)
         else:
             raise LogicError("Cannot assign to this")
 
