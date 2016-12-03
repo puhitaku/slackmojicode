@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import interpreter, parser
+import interpreter, parser, converter
 from rtmbot.core import Plugin
 
 
@@ -15,8 +15,8 @@ class SlackMojicodePlugin(Plugin):
     def process_message(self, data):
         intr = interpreter.Interpreter()
 
-        if data['text'].startswith('<@{}>'.format(self.user_id)):
-            script = data['text'].replace('<@{}>'.format(self.user_id), '')
+        if data['text'].startswith('<@{}> run'.format(self.user_id)):
+            script = data['text'].replace('<@{}> run'.format(self.user_id), '')
             script = script.strip()
             script = script.replace('&lt;', '<')
             script = script.replace('&gt;', '>')
@@ -33,6 +33,15 @@ class SlackMojicodePlugin(Plugin):
             except Exception as e:
                 out += "\n\nError has occured while excecuting SlackMojicode:\n```{}: {}```" \
                     .format(type(e), e)
+                raise e
 
             self.outputs.append([data['channel'], '\n' + out])
 
+        if data['text'].startswith('<@{}> convert'.format(self.user_id)):
+            script = data['text'].replace('<@{}> convert'.format(self.user_id), '')
+            script = script.strip()
+            script = script.replace('&lt;', '<')
+            script = script.replace('&gt;', '>')
+            script = converter.convert(script)
+
+            self.outputs.append([data['channel'], script])
