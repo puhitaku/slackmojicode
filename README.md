@@ -4,6 +4,8 @@
 
 This language is based on joshsharp's Braid.
 
+Tokens are replaced with emoji-style one as you see in below picture, and you can find assinments [here](slackmojicode/lexer.py).
+
 ![Run script](pic/run.png)
 ![Convert script](pic/convert.png)
 
