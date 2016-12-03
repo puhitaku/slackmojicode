@@ -9,11 +9,12 @@ Tokens are replaced with emoji-style one as you see in below picture, and you ca
 ![Run script](pic/run.png)
 ![Convert script](pic/convert.png)
 
-## Installing
+## Prerequisites / Install
 
-`pip install -r requirements.txt`
-
-Add your Slack bot's token in `rtmbot.conf` then execute `rtmbot` .
+ - Works on Python 2.7
+ - `pip install -r requirements.txt`
+ - Add your Slack bot's token in `rtmbot.conf`
+ - Execute `rtmbot`
 
 ## Running
 
