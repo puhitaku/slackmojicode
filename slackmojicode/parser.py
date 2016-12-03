@@ -13,7 +13,7 @@ class ParserState(object):
 
 pg = ParserGenerator(
     # A list of all token names, accepted by the parser.
-    ['STRING', 'INTEGER', 'FLOAT', 'IDENTIFIER', 'BOOLEAN',
+    ['STRING', 'INTEGER', 'FLOAT', 'PRINT', 'IDENTIFIER', 'BOOLEAN',
      'PLUS', 'MINUS', 'MUL', 'DIV',
      'IF', 'ELSE', 'COLON', 'END', 'AND', 'OR', 'NOT', 'LET','WHILE',
      '(', ')', '=', '==', '!=', '>=', '<=', '<', '>', '[', ']', ',',
@@ -24,16 +24,16 @@ pg = ParserGenerator(
     # A list of precedence rules with ascending precedence, to
     # disambiguate ambiguous production rules.
     precedence=[
-        ('left', ['FUNCTION',]),
-        ('left', ['LET',]),
+        ('left', ['FUNCTION', 'PRINT']),
+        ('left', ['LET']),
         ('left', ['=']),
-        ('left', ['[',']',',']),
-        ('left', ['IF', 'COLON', 'ELSE', 'END', 'NEWLINE','WHILE',]),
-        ('left', ['AND', 'OR',]),
-        ('left', ['NOT',]),
-        ('left', ['==', '!=', '>=','>', '<', '<=',]),
-        ('left', ['PLUS', 'MINUS',]),
-        ('left', ['MUL', 'DIV',]),
+        ('left', ['[', ']', ',']),
+        ('left', ['IF', 'COLON', 'ELSE', 'END', 'NEWLINE','WHILE']),
+        ('left', ['AND', 'OR']),
+        ('left', ['NOT']),
+        ('left', ['==', '!=', '>=','>', '<', '<=']),
+        ('left', ['PLUS', 'MINUS']),
+        ('left', ['MUL', 'DIV']),
         
     ]
 )
@@ -85,6 +85,14 @@ def statement_expr(state, p):
 @pg.production('statement : IDENTIFIER = expression')
 def statement_assignment(state, p):
     return Assignment(Variable(p[0].getstr()),p[2])
+
+@pg.production('statement : PRINT ( )')
+def statement_print(state, p):
+    return Print("")
+
+@pg.production('statement : PRINT ( expressionlist )')
+def statement_print(state, p):
+    return Print(p[2])
 
 @pg.production('statement : FUNCTION IDENTIFIER ( arglist ) COLON NEWLINE block END')
 def statement_func(state, p):
