@@ -4,6 +4,9 @@
 
 This language is based on joshsharp's Braid.
 
+![Run script](pic/run.png)
+![Convert script](pic/convert.png)
+
 ## Installing
 
 `pip install -r requirements.txt`
