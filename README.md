@@ -18,9 +18,7 @@ Tokens are replaced with emoji-style one as you see in below picture, and you ca
 
 ## Running
 
-`python braid.py` for REPL, `python braid.py [filename].bd` for interpreting a file
-
-`:a` gives you the AST of the last statement, `:e` to list environment variables, `:q` or Ctrl-C to quit. The REPL now supports multi-line input too — it'll just keep appending code and trying to interpret it until it's valid (eg. you closed the block or whatever), or you break it ;)
+ - Execute `rtmbot`
 
 ## Modification
 
