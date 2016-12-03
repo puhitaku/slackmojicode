@@ -1,7 +1,7 @@
-import parser, compiler, bytecode, objects, errors, prelude
+import compiler, bytecode, objects, prelude
+
 
 class Interpreter(object):
-
     def __init__(self):
         self.last_bc = ''
         self.context = compiler.Context()
@@ -10,9 +10,10 @@ class Interpreter(object):
     
     def import_prelude(self):
         index = self.context.register_variable("readline")
-        self.context.variables[index] = objects.Variable("readline",objects.ExternalFunction("readline",prelude.readline,1))
-        
-        
+        self.context.variables[index] = objects.Variable(
+            "readline",
+            objects.ExternalFunction("readline", prelude.readline, 1))
+
     def compile_interpret(self, ast, context=None):
         if not context:
             context = self.context
@@ -30,23 +31,22 @@ class Interpreter(object):
     
     def interpret(self, byte_code, args=[]):
         
-        pc = 0 # program counter
+        pc = 0  # program counter
         stack = []
         variables = [objects.Null()] * 255
-        
+
         assert(len(args) == len(byte_code.arguments))
         
-        #print "(running %s)" % byte_code.name
+        # print "(running %s)" % byte_code.name
         
         # copy args into inner context
-        for i in xrange(0,len(args)):
+        for i in xrange(0, len(args)):
             # TODO: this doesn't make sense, indexes change I think?
             # Make sure these aren't getting overwritten
             index = byte_code.arguments[i]
-            #print "(arg %s going into %s)" % (args[i].dump(),index)
-            byte_code.variables[index] = objects.Variable("arg",args[i])
-            
-        
+            # print "(arg %s going into %s)" % (args[i].dump(),index)
+            byte_code.variables[index] = objects.Variable("arg", args[i])
+
         self.last_bc += byte_code.dump(True)
         
         while pc < len(byte_code.instructions):
@@ -54,7 +54,7 @@ class Interpreter(object):
             # the type of instruction and arg (a tuple)
             opcode, arg = byte_code.instructions[pc]
             
-            #print "(%s %s %s)" % (pc, bytecode.reverse[opcode], arg)
+            # print "(%s %s %s)" % (pc, bytecode.reverse[opcode], arg)
             
             # then increment
             pc += 1
@@ -66,14 +66,14 @@ class Interpreter(object):
             
             elif opcode == bytecode.LOAD_VARIABLE:
                 var = byte_code.variables[arg]
-                assert(isinstance(var,objects.Variable))
-                #print "- appending value %s" % var.value.dump()
+                assert(isinstance(var, objects.Variable))
+                # print "- appending value %s" % var.value.dump()
                 stack.append(var.value)
             
             elif opcode == bytecode.STORE_VARIABLE:
                 value = stack.pop()
-                oldvar = byte_code.variables.get(arg,None)
-                byte_code.variables[arg] = objects.Variable(oldvar.name,value)
+                oldvar = byte_code.variables.get(arg, None)
+                byte_code.variables[arg] = objects.Variable(oldvar.name, value)
                 stack.append(value)
             
             elif opcode == bytecode.STORE_ARRAY:
@@ -83,7 +83,7 @@ class Interpreter(object):
                 stack.append(objects.Array(values))
             
             elif opcode == bytecode.STORE_DICT:
-                values = objects.r_dict(objects.dict_eq,objects.dict_hash)
+                values = objects.r_dict(objects.dict_eq, objects.dict_hash)
                 for i in xrange(arg):
                     values[stack.pop()] = stack.pop()
                 stack.append(objects.Dict(values))
@@ -170,18 +170,18 @@ class Interpreter(object):
             
             elif opcode == bytecode.JUMP_IF_NOT_ZERO:
                 val = stack.pop()
-                assert(isinstance(val,objects.BaseBox))
+                assert(isinstance(val, objects.BaseBox))
                 
                 result = val.equals(objects.Boolean(True))
-                assert(isinstance(result,objects.Boolean))
+                assert(isinstance(result, objects.Boolean))
                 if result.value:
                     pc = arg
                     
             elif opcode == bytecode.JUMP_IF_ZERO:
                 val = stack.pop()
-                assert(isinstance(val,objects.BaseBox))
+                assert(isinstance(val, objects.BaseBox))
                 result = val.equals(objects.Boolean(True))
-                assert(isinstance(result,objects.Boolean))
+                assert(isinstance(result, objects.Boolean))
                 if not result.value:
                     pc = arg
 
@@ -189,29 +189,27 @@ class Interpreter(object):
                 pc = arg
 
             elif opcode == bytecode.CALL:
-                assert(isinstance(byte_code.variables[arg],objects.Variable))
+                assert(isinstance(byte_code.variables[arg], objects.Variable))
                 val = byte_code.variables[arg].value
-                if isinstance(val,objects.Function):
+                if isinstance(val, objects.Function):
                     func = val.code
-                    self.copy_context(byte_code,func)
+                    self.copy_context(byte_code, func)
                     args = []
                     if len(func.arguments) > len(stack):
                         raise Exception("Not enough arguments")
                     
-                    for i in range(0,len(func.arguments)):
+                    for i in range(0, len(func.arguments)):
                         args.append(stack.pop())
-                    stack.append(self.interpret(func,args))
+                    stack.append(self.interpret(func, args))
                 elif isinstance(val, objects.ExternalFunction):
                     # call
                     func = val.fn
                     arglen = val.args
                     args = []
-                    for i in range(0,arglen):
+                    for i in range(0, arglen):
                         args.append(stack.pop())
                     result = func(args)
                     stack.append(result)
                 else:
                     raise Exception("Not a function")
         return stack[len(stack) - 1]
-        
-
