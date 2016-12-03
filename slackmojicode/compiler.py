@@ -408,7 +408,7 @@ def compile_any(context, ast):
         "or":compile_or,
         "and":compile_and,
         "not":compile_not,
-        #"print":compile_print,
+        "print":compile_print,
         "string":compile_string,
         "integer":compile_integer,
         "float":compile_float,

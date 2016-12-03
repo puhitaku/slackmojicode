@@ -6,11 +6,9 @@ class Interpreter(object):
         self.last_bc = ''
         self.context = compiler.Context()
         self.import_prelude()
+        self.stdout = []
     
     def import_prelude(self):
-        index = self.context.register_variable("print")
-        self.context.variables[index] = objects.Variable("print",objects.ExternalFunction("print",prelude.print_fn,1))
-        
         index = self.context.register_variable("readline")
         self.context.variables[index] = objects.Variable("readline",objects.ExternalFunction("readline",prelude.readline,1))
         
@@ -26,6 +24,9 @@ class Interpreter(object):
     def copy_context(self, code_from, code_to):
         for k, v in code_from.variables.iteritems():
             code_to.variables[k] = v
+
+    def get_stdout(self):
+        return self.stdout
     
     def interpret(self, byte_code, args=[]):
         
@@ -92,7 +93,7 @@ class Interpreter(object):
             
             elif opcode == bytecode.PRINT:
                 value = stack.pop()
-                print value.to_string()
+                self.stdout.append(value.to_string())
                 stack.append(objects.Null())
             
             elif opcode == bytecode.INDEX:
