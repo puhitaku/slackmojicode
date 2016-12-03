@@ -2,7 +2,7 @@
 
 **Programming emoji interpreter works on Slack as a bot.**
 
-This language is based on joshsharp's Braid.
+This language is based on joshsharp's [Braid](https://github.com/joshsharp/braid).
 
 Tokens are replaced with emoji-style one as you see in below picture, and you can find assinments [here](slackmojicode/lexer.py).
 
